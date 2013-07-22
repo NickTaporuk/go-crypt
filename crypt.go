@@ -14,7 +14,8 @@ This library is an implementation of `crypt` function like as perl or ruby.
 */
 
 import (
-	"bytes";
+    "bytes"
+    "strings"
 )
 
 var PC1_C []byte = []byte{
@@ -232,7 +233,9 @@ func Crypt(pw string, salt string) string {
 		iobuf[i+2] = c;
 	}
 
-	iobuf[i+2] = 0;
-	buffer := bytes.NewBuffer(iobuf[:]);
-	return buffer.String();
+    iobuf[i+2] = 0;
+    src := bytes.NewBuffer(iobuf[:]).String();
+    ret := strings.Replace( src, "\x00", "", -1 )
+
+	return ret;
 }
