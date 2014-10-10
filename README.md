@@ -1,6 +1,8 @@
 go-crypt - Traditional Crypt function implemented in Go.
 ========================================================
 
+[![Build Status](https://travis-ci.org/nyarla/go-crypt.svg?branch=master)](https://travis-ci.org/nyarla/go-crypt) [![GoDoc](http://godoc.org/github.com/nyarla/go-crypt?status.svg)](https://godoc.org/github.com/nyarla/go-crypt)
+
 Example
 -------
 
