@@ -1,6 +1,9 @@
-// Copyright 2009 iasija. All right reserved.
-// This library under the New BSD License.
-// Fix for supports current golang (1.1) by Naoki OKAMURA (Nyarla) <nyarla[ at ]thotep.net>
+/*
+Copyright of original code (C) 2009 iasija All rights reserved.
+This library under the New BSD License: http://opensource.org/licenses/BSD-3-Clause
+
+Copyright of modified code (C) 2013-2014 Naoki OKAMURA (Nyarla) <nyarla[ at ]thotep.net> Some  rights reserved.
+*/
 
 package crypt
 
