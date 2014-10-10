@@ -1,9 +1,8 @@
-go-crypt
-========
+go-crypt - Traditional Crypt function implemented in Go.
+========================================================
 
-Traditional Crypt function implemented in Go.
-
-# Example
+Example
+-------
 
 ```go
 import (
@@ -16,22 +15,19 @@ func main() {
 }
 ```
 
-# Why did I fork it ?
+# Why I forked it?
 
-Original code is written by iasija at 08 Dec, 2009,
-and hosting on [code.google.com/p/go-crypt](https://code.google.com/p/go-crypt/).
+Originalcode is written by iasija at 2009-12-08,
+And orignal code is hosting on [code.google.com/p/go-crypt](https://code.google.com/p/go-crypt/).
 
-But this code does not work current golang 1.1,
-So, I fix for supports current golang 1.1,
-and added to some documentationi and tests.
+But original code is not supported golang 1.1 or later.
 
-And, I could not found to iasijya's contacts address.
+So I fixed this issue, added documentation, and tests code.
+
+NOTE: I could't find to iasija's contactt address.
 
 # License and Copyright
 
-* Copyright 2009 iasijya All rights reserved.
-  * Original Source cocde is hoting on: [code.google.com/p/go-crypt](https://code.google.com/p/go-crypt)
-  * This library is under the [New BSD License](http://opensource.org/licenses/BSD-3-Clause)
-  * NOTE: License of this library is specified in google code page.
-* Some Fix and Modified by Naoki OKAMURA (Nyarla) *nyarla[ at ]*thotep.net
+  * Copyright of original code (C) 2009 isija All rights reserved. ([BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause))
+  * Copyright of modified code (C) 2013-2014 Naoki OKAMURA (Nyarla) *nyarla[ at ]thotep.net* Some rights reserved. ([BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause))
 
