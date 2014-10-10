@@ -1,12 +1,12 @@
 package crypt_test
 
 import (
-    "fmt"
-    "."
+	"."
+	"fmt"
 )
 
 func ExampleCrypt() {
-    fmt.Println( crypt.Crypt("testtest", "es") )
-    // Output:
-    // esDRYJnY4VaGM
+	fmt.Println(crypt.Crypt("testtest", "es"))
+	// Output:
+	// esDRYJnY4VaGM
 }
