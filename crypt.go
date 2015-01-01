@@ -1,54 +1,37 @@
-/*
-Copyright of original code (C) 2009 iasija All rights reserved.
-This library under the New BSD License: http://opensource.org/licenses/BSD-3-Clause
-
-Copyright of modified code (C) 2013-2014 Naoki OKAMURA (Nyarla) <nyarla[ at ]thotep.net> Some  rights reserved.
-*/
-
 package crypt
-
-/*
-go-crypt - Traditional Crypt function implemented in Go.
-
-This library is an implementation of `crypt` function like as perl or ruby.
-
-1. Perl: http://perldoc.perl.org/functions/crypt.html
-2. Ruby: http://ruby-doc.org/core-2.0/String.html#method-i-crypt
-*/
 
 import (
 	"bytes"
-	"strings"
 )
 
-var PC1_C []byte = []byte{
+var PC1_C = []byte{
 	57, 49, 41, 33, 25, 17, 9,
 	1, 58, 50, 42, 34, 26, 18,
 	10, 2, 59, 51, 43, 35, 27,
 	19, 11, 3, 60, 52, 44, 36,
 }
 
-var PC1_D []byte = []byte{
+var PC1_D = []byte{
 	63, 55, 47, 39, 31, 23, 15,
 	7, 62, 54, 46, 38, 30, 22,
 	14, 6, 61, 53, 45, 37, 29,
 	21, 13, 5, 28, 20, 12, 4,
 }
 
-var PC2_C []byte = []byte{
+var PC2_C = []byte{
 	14, 17, 11, 24, 1, 5,
 	3, 28, 15, 6, 21, 10,
 	23, 19, 12, 4, 26, 8,
 	16, 7, 27, 20, 13, 2,
 }
-var PC2_D []byte = []byte{
+var PC2_D = []byte{
 	41, 52, 31, 37, 47, 55,
 	30, 40, 51, 45, 33, 48,
 	44, 49, 39, 56, 34, 53,
 	46, 42, 50, 36, 29, 32,
 }
 
-var e2 []byte = []byte{
+var e2 = []byte{
 	32, 1, 2, 3, 4, 5,
 	4, 5, 6, 7, 8, 9,
 	8, 9, 10, 11, 12, 13,
@@ -59,7 +42,7 @@ var e2 []byte = []byte{
 	28, 29, 30, 31, 32, 1,
 }
 
-var IP []byte = []byte{
+var IP = []byte{
 	58, 50, 42, 34, 26, 18, 10, 2,
 	60, 52, 44, 36, 28, 20, 12, 4,
 	62, 54, 46, 38, 30, 22, 14, 6,
@@ -70,7 +53,7 @@ var IP []byte = []byte{
 	63, 55, 47, 39, 31, 23, 15, 7,
 }
 
-var FP []byte = []byte{
+var FP = []byte{
 	40, 8, 48, 16, 56, 24, 64, 32,
 	39, 7, 47, 15, 55, 23, 63, 31,
 	38, 6, 46, 14, 54, 22, 62, 30,
@@ -81,7 +64,7 @@ var FP []byte = []byte{
 	33, 1, 41, 9, 49, 17, 57, 25,
 }
 
-var S [][]byte = [][]byte{
+var S = [][]byte{
 	[]byte{14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7,
 		0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8,
 		4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0,
@@ -116,33 +99,48 @@ var S [][]byte = [][]byte{
 		2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11},
 }
 
-var P []byte = []byte{
+var P = []byte{
 	16, 7, 20, 21, 29, 12, 28, 17,
 	1, 15, 23, 26, 5, 18, 31, 10,
 	2, 8, 24, 14, 32, 27, 3, 9,
 	19, 13, 30, 6, 22, 11, 4, 25,
 }
 
-var shift []int = []int{1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1}
+var shift = []int{1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1}
 
-// Crypt returns encrypted string from pw and salt.
+// Crypt is a implementation of crypt(3) like as perl or ruby and ...etc.
+//
+// Behavior of this func is  same as perl-5.18.2's crypt on OSX Yosemite.
 func Crypt(pw string, salt string) string {
-	var block [66]byte
+	if sLen := len(salt); sLen < 2 {
+		src := []byte(salt)
+		for len(src) < 2 {
+			src = append(src, 0x00)
+		}
+		salt = string(src)
+	}
+
+	block := make([]byte, 66)
 
 	for i := 0; i < 8 && i < len(pw); i++ {
 		for j := 0; j < 7; j++ {
-			block[8*i+j] = (pw[i] >> uint8(6-j)) & 1
+			block[(8*i)+j] = (pw[i] >> byte(6-j)) & 1
 		}
 	}
 
-	var C [28]byte
-	var D [28]byte
+	C := make([]byte, 28)
+	D := make([]byte, 28)
+
 	for i := 0; i < 28; i++ {
 		C[i] = block[PC1_C[i]-1]
 		D[i] = block[PC1_D[i]-1]
 	}
 
-	var KS [16][48]byte
+	KS := make([][]byte, 16)
+	for i := 0; i < 16; i++ {
+		KS[i] = make([]byte, 48)
+	}
+
 	for i := 0; i < 16; i++ {
 		for k := 0; k < shift[i]; k++ {
 			t := C[0]
@@ -162,14 +160,14 @@ func Crypt(pw string, salt string) string {
 		}
 	}
 
-	var E [48]byte
+	E := make([]byte, 48)
 	for i := 0; i < 48; i++ {
 		E[i] = e2[i]
 	}
 
-	var iobuf [16]byte
+	iobuf := make([]byte, 16)
 	for i := 0; i < 2; i++ {
-		var c byte = salt[i]
+		c := byte(salt[i])
 		iobuf[i] = c
 
 		if c > 'Z' {
@@ -182,7 +180,7 @@ func Crypt(pw string, salt string) string {
 		c -= '.'
 
 		for j := 0; j < 6; j++ {
-			if (c>>uint8(j))&1 != 0 {
+			if (c>>byte(j))&1 != 0 {
 				k := E[6*i+j]
 				E[6*i+j] = E[6*i+j+24]
 				E[6*i+j+24] = k
@@ -194,12 +192,12 @@ func Crypt(pw string, salt string) string {
 		block[i] = 0
 	}
 
-	var R [32]byte
-	var L [32]byte
-	var DMY [32]byte
-	var preS [48]byte
-	var f [32]byte
-	var dmy_block [64]byte
+	R := make([]byte, 32)
+	L := make([]byte, 32)
+	DMY := make([]byte, 32)
+	preS := make([]byte, 48)
+	f := make([]byte, 32)
+	dmy_block := make([]byte, 64)
 
 	for m := 0; m < 25; m++ {
 		for i := 0; i < 32; i++ {
@@ -255,7 +253,7 @@ func Crypt(pw string, salt string) string {
 	}
 	var i int
 	for i = 0; i < 11; i++ {
-		var c byte = 0
+		c := byte(0)
 		for j := 0; j < 6; j++ {
 			c = c << 1
 			c = c | block[6*i+j]
@@ -273,8 +271,6 @@ func Crypt(pw string, salt string) string {
 	}
 
 	iobuf[i+2] = 0
-	src := bytes.NewBuffer(iobuf[:]).String()
-	ret := strings.Replace(src, "\x00", "", -1)
 
-	return ret
+	return string(bytes.Replace(iobuf, []byte{0x00}, []byte{}, -1))
 }
